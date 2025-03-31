@@ -173,12 +173,13 @@ public class Owner extends Person {
 
 		pet.addVisit(visit);
 	}
-	
-	// -------------------- Métodos con vulnerabilidades y bugs para Sonar --------------------
+
+	// -------------------- Métodos con vulnerabilidades y bugs para Sonar
+	// --------------------
 
 	/**
-	 * Método que simula una fuga de recurso al no cerrar un FileInputStream.
-	 * Este método compila, pero genera un warning en Sonar.
+	 * Método que simula una fuga de recurso al no cerrar un FileInputStream. Este método
+	 * compila, pero genera un warning en Sonar.
 	 */
 	public void resourceLeak() throws FileNotFoundException {
 		// Se abre un recurso y nunca se cierra
@@ -215,13 +216,16 @@ public class Owner extends Person {
 	public void emptyCatchBlock() {
 		try {
 			int division = 10 / 0;
-		} catch (Exception e) { // Capturar Exception de forma tan genérica es una mala práctica
+		}
+		catch (Exception e) { // Capturar Exception de forma tan genérica es una mala
+								// práctica
 			// No se hace nada con la excepción
 		}
 	}
 
 	/**
-	 * Método que retorna una contraseña codificada de forma hardcodeada, lo que es inseguro.
+	 * Método que retorna una contraseña codificada de forma hardcodeada, lo que es
+	 * inseguro.
 	 */
 	public String hardCodedPassword() {
 		String password = "1234Abcd!"; // Contraseña hardcodeada
@@ -229,8 +233,8 @@ public class Owner extends Person {
 	}
 
 	/**
-	 * Método que contiene un posible NullPointerException en un bloque inalcanzable,
-	 * lo que puede generar alertas en herramientas de análisis estático.
+	 * Método que contiene un posible NullPointerException en un bloque inalcanzable, lo
+	 * que puede generar alertas en herramientas de análisis estático.
 	 */
 	public void potentialNPE() {
 		if (false) { // Bloque inalcanzable
@@ -239,4 +243,5 @@ public class Owner extends Person {
 			System.out.println(obj.toString());
 		}
 	}
+
 }
