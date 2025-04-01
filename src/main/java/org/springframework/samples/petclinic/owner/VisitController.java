@@ -45,6 +45,7 @@ class VisitController {
 
 	public VisitController(OwnerRepository owners) {
 		this.owners = owners;
+		this.vets = vets;
 	}
 
 	@InitBinder
@@ -97,4 +98,54 @@ class VisitController {
 		return "redirect:/owners/{ownerId}";
 	}
 
+	@GetMapping("/owners/{ownerId}/visits/report")
+	public String generateVisitsReport(@PathVariable("ownerId") int ownerId) {
+		Optional<Owner> optionalOwner = owners.findById(ownerId);
+		Owner owner = optionalOwner.orElseThrow(() -> new IllegalArgumentException(
+				"Owner not found with id: " + ownerId));
+
+		// Print owner's pets and their visits
+		System.out.println("\n=== Visits Report for Owner: " + owner.getFirstName() + " " + owner.getLastName() + " ===");
+		owner.getPets().forEach(pet -> {
+			System.out.println("\nPet: " + pet.getName() + " (" + pet.getType().getName() + ")");
+			if (pet.getVisits().isEmpty()) {
+				System.out.println("  No visits registered");
+			} else {
+				pet.getVisits().forEach(visit -> {
+					System.out.printf("  Date: %s | Vet: %s %s | Description: %s%n",
+						visit.getDate(),
+						visit.getVet().getFirstName(),
+						visit.getVet().getLastName(),
+						visit.getDescription());
+				});
+			}
+		});
+
+		// Print vets and their patients
+		System.out.println("\n=== Veterinarians and Their Patients ===");
+		vets.findAll().forEach(vet -> {
+			System.out.println("\nVet: " + vet.getFirstName() + " " + vet.getLastName());
+			
+			// Get all pets attended by this vet
+			List<Pet> petsAttended = owner.getPets().stream()
+				.filter(pet -> pet.getVisits().stream()
+					.anyMatch(visit -> visit.getVet().getId().equals(vet.getId())))
+				.collect(Collectors.toList());
+
+			if (petsAttended.isEmpty()) {
+				System.out.println("  No patients for this vet");
+			} else {
+				petsAttended.forEach(pet -> {
+					System.out.printf("  Pet: %s (Owner: %s %s)%n",
+						pet.getName(),
+						owner.getFirstName(),
+						owner.getLastName());
+				});
+			}
+		});
+
+		return "redirect:/owners/" + ownerId;
+	}
+
+	
 }
