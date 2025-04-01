@@ -30,10 +30,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.validation.Valid;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.samples.petclinic.vet.VetRepository;
-
 /**
  * @author Juergen Hoeller
  * @author Ken Krebs
@@ -47,11 +43,8 @@ class VisitController {
 
 	private final OwnerRepository owners;
 
-	private final VetRepository vets;
-
-	public VisitController(OwnerRepository owners, VetRepository vets) {
+	public VisitController(OwnerRepository owners) {
 		this.owners = owners;
-		this.vets = vets;
 	}
 
 	@InitBinder
@@ -102,49 +95,6 @@ class VisitController {
 		this.owners.save(owner);
 		redirectAttributes.addFlashAttribute("message", "Your visit has been booked");
 		return "redirect:/owners/{ownerId}";
-	}
-
-	@GetMapping("/owners/{ownerId}/visits/report")
-	public String generateVisitsReport(@PathVariable("ownerId") int ownerId) {
-		Optional<Owner> optionalOwner = owners.findById(ownerId);
-		Owner owner = optionalOwner
-			.orElseThrow(() -> new IllegalArgumentException("Owner not found with id: " + ownerId));
-
-		// Print owner's pets and their visits
-		System.out
-			.println("\n=== Visits Report for Owner: " + owner.getFirstName() + " " + owner.getLastName() + " ===");
-		owner.getPets().forEach(pet -> {
-			System.out.println("\nPet: " + pet.getName() + " (" + pet.getType().getName() + ")");
-			if (pet.getVisits().isEmpty()) {
-				System.out.println("  No visits registered");
-			}
-			else {
-				pet.getVisits().forEach(visit -> {
-					System.out.printf("  Date: %s | Description: %s%n", visit.getDate(), visit.getDescription());
-				});
-			}
-		});
-
-		// Print vets and their patients
-		System.out.println("\n=== Veterinarians and Their Patients ===");
-		vets.findAll().forEach(vet -> {
-			System.out.println("\nVet: " + vet.getFirstName() + " " + vet.getLastName());
-
-			// Get all pets attended by this vet
-			List<Pet> petsAttended = owner.getPets().stream().collect(Collectors.toList());
-
-			if (petsAttended.isEmpty()) {
-				System.out.println("  No patients for this vet");
-			}
-			else {
-				petsAttended.forEach(pet -> {
-					System.out.printf("  Pet: %s (Owner: %s %s)%n", pet.getName(), owner.getFirstName(),
-							owner.getLastName());
-				});
-			}
-		});
-
-		return "redirect:/owners/" + ownerId;
 	}
 
 }
