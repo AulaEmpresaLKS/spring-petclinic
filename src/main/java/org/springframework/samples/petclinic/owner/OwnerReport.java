@@ -31,37 +31,38 @@ public class OwnerReport {
 			Collection<Visit> visits = pet.getVisits();
 
 			if (visits.isEmpty()) {
-				System.out.printf("Pet %s (Owner: %s %s) has no appointments scheduled%n", 
-					pet.getName(), owner.getFirstName(), owner.getLastName());
-			} else {
+				System.out.printf("Pet %s (Owner: %s %s) has no appointments scheduled%n", pet.getName(),
+						owner.getFirstName(), owner.getLastName());
+			}
+			else {
 				visits.forEach(visit -> {
-					String dayOfWeek = visit.getDate().getDayOfWeek()
+					String dayOfWeek = visit.getDate()
+						.getDayOfWeek()
 						.getDisplayName(TextStyle.FULL, Locale.getDefault());
-					
+
 					String surchargeInfo = "";
 					if (visit.getDate().getDayOfWeek() == DayOfWeek.SATURDAY) {
 						int month = visit.getDate().getMonth().getValue();
 						if (month == 12) {
 							surchargeInfo = " (December Saturday surcharge: 80% extra)";
-						} else if (month == 1) {
+						}
+						else if (month == 1) {
 							surchargeInfo = " (January Saturday surcharge: 70% extra)";
-						} else if (month == 8) {
+						}
+						else if (month == 8) {
 							surchargeInfo = " (August Saturday: No extra charge)";
-						} else {
+						}
+						else {
 							surchargeInfo = " (Weekend surcharge: 50% extra)";
 						}
-					} else if (visit.getDate().getDayOfWeek() == DayOfWeek.SUNDAY) {
+					}
+					else if (visit.getDate().getDayOfWeek() == DayOfWeek.SUNDAY) {
 						surchargeInfo = " (Weekend surcharge: 75% extra)";
 					}
-					
-					System.out.printf("Pet: %s | Owner: %s %s | Date: %s (%s)%s | Description: %s%n",
-						pet.getName(),
-						owner.getFirstName(),
-						owner.getLastName(),
-						visit.getDate(),
-						dayOfWeek,
-						surchargeInfo,
-						visit.getDescription());
+
+					System.out.printf("Pet: %s | Owner: %s %s | Date: %s (%s)%s | Description: %s%n", pet.getName(),
+							owner.getFirstName(), owner.getLastName(), visit.getDate(), dayOfWeek, surchargeInfo,
+							visit.getDescription());
 
 					String visitDate = visit.getDate().toString();
 					appointmentCount.merge(visitDate, 1, Integer::sum);
@@ -73,13 +74,13 @@ public class OwnerReport {
 		System.out.println("=== Summary of Appointments per Date ===");
 		appointmentCount.forEach((date, count) -> {
 			LocalDate visitDate = LocalDate.parse(date);
-			String dayOfWeek = visitDate.getDayOfWeek()
-				.getDisplayName(TextStyle.FULL, Locale.getDefault());
-			
+			String dayOfWeek = visitDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
+
 			System.out.printf("%s (%s): %d appointment(s)", date, dayOfWeek, count);
 			if (count >= 3) {
 				System.out.println(" - WARNING: High number of visits for this date!");
-			} else {
+			}
+			else {
 				System.out.println(" - There are still available slots for this date");
 			}
 		});
