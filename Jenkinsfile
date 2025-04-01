@@ -17,6 +17,7 @@ pipeline {
                             -v ./:/app \
                             -v "/home/jenkins/.m2":"/home/jenkins/.m2" \
                             -e JOB_ACTION="compile" \
+                            -e MAVEN_CMD="spring-javaformat:apply" \
                             -e MAVEN_CMD="clean verify sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.token=$SONAR_TOKEN -Dsonar.branch.name=$SONAR_BRANCH" \
                             $BUILD_IMAGE
                     '''
