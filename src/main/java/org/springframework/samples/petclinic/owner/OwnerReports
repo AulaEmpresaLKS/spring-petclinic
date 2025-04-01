@@ -1,0 +1,51 @@
+package org.springframework.samples.petclinic.owner;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import org.springframework.samples.petclinic.owner.Visit;
+
+@Component
+public class OwnerReports {
+
+	@Autowired
+	private OwnerRepository ownerRepository;
+
+	public void printPetAppointments(int ownerId) {
+		Owner owner = ownerRepository.findById(ownerId)
+			.orElseThrow(() -> new IllegalArgumentException("Owner not found with ID: " + ownerId));
+
+		System.out.println("=== Appointments Report for " + owner.getFirstName() + " " + owner.getLastName() + " ===");
+		System.out.println();
+
+		Map<String, Integer> appointmentCount = new HashMap<>();
+
+		owner.getPets().forEach(pet -> {
+			System.out.println("Pet: " + pet.getName());
+			Collection<Visit> visits = pet.getVisits();
+
+			if (visits.isEmpty()) {
+				System.out.println("No appointments scheduled");
+			}
+			else {
+				visits.forEach(visit -> {
+					System.out.printf("Date: %s | Description: %s%n", visit.getDate(), visit.getDescription());
+
+					// Count appointments by date instead of vet
+					String visitDate = visit.getDate().toString();
+					appointmentCount.merge(visitDate, 1, Integer::sum);
+				});
+			}
+			System.out.println();
+		});
+
+		// Print summary of appointments per date
+		System.out.println("=== Summary of Appointments per Date ===");
+		appointmentCount.forEach((date, count) -> System.out.printf("Date %s: %d appointment(s)%n", date, count));
+	}
+
+}
