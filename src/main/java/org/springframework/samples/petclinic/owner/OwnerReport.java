@@ -13,7 +13,7 @@ import java.util.Set;
 import org.springframework.samples.petclinic.owner.Visit;
 
 @Component
-public class OwnerReports {
+public class OwnerReport {
 
 	@Autowired
 	private OwnerRepository ownerRepository;
