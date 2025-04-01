@@ -30,6 +30,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.validation.Valid;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.samples.petclinic.vet.VetRepository;
+
 /**
  * @author Juergen Hoeller
  * @author Ken Krebs
@@ -43,7 +47,9 @@ class VisitController {
 
 	private final OwnerRepository owners;
 
-	public VisitController(OwnerRepository owners) {
+	private final VetRepository vets;
+
+	public VisitController(OwnerRepository owners, VetRepository vets) {
 		this.owners = owners;
 		this.vets = vets;
 	}
@@ -114,8 +120,7 @@ class VisitController {
 			}
 			else {
 				pet.getVisits().forEach(visit -> {
-					System.out.printf("  Date: %s | Vet: %s %s | Description: %s%n", visit.getDate(),
-							visit.getVet().getFirstName(), visit.getVet().getLastName(), visit.getDescription());
+					System.out.printf("  Date: %s | Description: %s%n", visit.getDate(), visit.getDescription());
 				});
 			}
 		});
@@ -126,10 +131,7 @@ class VisitController {
 			System.out.println("\nVet: " + vet.getFirstName() + " " + vet.getLastName());
 
 			// Get all pets attended by this vet
-			List<Pet> petsAttended = owner.getPets()
-				.stream()
-				.filter(pet -> pet.getVisits().stream().anyMatch(visit -> visit.getVet().getId().equals(vet.getId())))
-				.collect(Collectors.toList());
+			List<Pet> petsAttended = owner.getPets().stream().collect(Collectors.toList());
 
 			if (petsAttended.isEmpty()) {
 				System.out.println("  No patients for this vet");
