@@ -106,6 +106,20 @@ public class Owner extends Person {
 	}
 
 	/**
+	 * Adds a visit to the pet with the given ID.
+	 * @param petId the ID of the pet
+	 * @param visit the visit to add
+	 * @throws IllegalArgumentException if no pet with the given ID is found
+	 */
+	public void addVisit(int petId, Visit visit) {
+		Pet pet = getPet(petId);
+		if (pet == null) {
+			throw new IllegalArgumentException("Pet not found with id: " + petId);
+		}
+		pet.addVisit(visit);
+	}
+
+	/**
 	 * Return the Pet with the given name, or null if none found for this Owner.
 	 * @param name to test
 	 * @param ignoreNew whether to ignore new pets (pets that are not saved yet)
