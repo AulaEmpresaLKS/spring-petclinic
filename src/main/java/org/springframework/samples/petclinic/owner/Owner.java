@@ -172,24 +172,4 @@ public class Owner extends Person {
 		pet.addVisit(visit);
 	}
 
-	/**
-	 * Vulnerable method: constructs a SQL query directly from user input.
-	 *
-	 * SONAR ISSUE: Change this code to not construct SQL queries directly from
-	 * user-controlled data. Database queries should not be vulnerable to injection
-	 * attacks (security:S3649).
-	 *
-	 * In a real scenario, use parameterized queries or prepared statements.
-	 */
-	public String generateUnsafeQuery(String userInput) {
-		// Vulnerable: the user-controlled input is concatenated directly into the SQL
-		// query.
-		String query = "SELECT * FROM users WHERE username = '" + userInput + "'";
-		// Note: Instead of logging to System.out, a proper logger should be used in
-		// production.
-		// However, in this example we intentionally avoid System.out to focus on the SQL
-		// injection issue.
-		return query;
-	}
-
-}
+	
