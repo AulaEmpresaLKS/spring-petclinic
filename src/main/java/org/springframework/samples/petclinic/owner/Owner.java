@@ -15,12 +15,13 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.samples.petclinic.model.Person;
-import org.springframework.util.Assert;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -172,4 +173,74 @@ public class Owner extends Person {
 		pet.addVisit(visit);
 	}
 
-}	
+	// -------------------- Métodos con vulnerabilidades y bugs para Sonar
+	// --------------------
+
+	/**
+	 * Método que simula una fuga de recurso al no cerrar un FileInputStream. Este método
+	 * compila, pero genera un warning en Sonar.
+	 */
+	public void resourceLeak() throws FileNotFoundException {
+		// Se abre un recurso y nunca se cierra
+		FileInputStream fis = new FileInputStream("archivo.txt");
+		// No se realiza un try-with-resources ni se cierra el stream
+		System.out.println("Recurso abierto: " + fis);
+	}
+
+	/**
+	 * Método que simula una vulnerabilidad de inyección SQL concatenando parámetros.
+	 * Aunque compila, es propenso a vulnerabilidades si se ejecuta.
+	 */
+	public String sqlInjectionVulnerability(String username) {
+		// La consulta se construye concatenando el parámetro, lo cual es inseguro
+		String query = "SELECT * FROM users WHERE username = '" + username + "'";
+		// Se imprime la consulta para simular su ejecución
+		System.out.println("Ejecutando consulta: " + query);
+		return query;
+	}
+
+	/**
+	 * Método que declara variables no utilizadas, lo que genera code smells en Sonar.
+	 */
+	public void unusedVariablesBug() {
+		int unusedInt = 42;
+		String unusedString = "valor inutil";
+		// Variables declaradas pero no utilizadas
+		System.out.println("Este método tiene variables no utilizadas.");
+	}
+
+	/**
+	 * Método con manejo de excepciones pobre: se captura Exception genérica y se ignora.
+	 */
+	public void emptyCatchBlock() {
+		try {
+			int division = 10 / 0;
+		}
+		catch (Exception e) { // Capturar Exception de forma tan genérica es una mala
+								// práctica
+			// No se hace nada con la excepción
+		}
+	}
+
+	/**
+	 * Método que retorna una contraseña codificada de forma hardcodeada, lo que es
+	 * inseguro.
+	 */
+	public String hardCodedPassword() {
+		String password = "1234Abcd!"; // Contraseña hardcodeada
+		return password;
+	}
+
+	/**
+	 * Método que contiene un posible NullPointerException en un bloque inalcanzable, lo
+	 * que puede generar alertas en herramientas de análisis estático.
+	 */
+	public void potentialNPE() {
+		if (false) { // Bloque inalcanzable
+			Object obj = null;
+			// Esta línea genera un NullPointerException si se ejecutase
+			System.out.println(obj.toString());
+		}
+	}
+
+}
