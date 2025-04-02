@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.samples.petclinic.model.Person;
-import org.springframework.util.Assert;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -231,8 +230,5 @@ public class Owner extends Person {
 		// injection issue.
 		return query;
 	}
-
-}
-
 
 }
