@@ -4,11 +4,25 @@ pipeline {
     }
     environment {
         BUILD_IMAGE = "registry.lksnext.com/devsecops/maven-java-17:2.0"
-        SONAR_HOST_URL = "https://sonarqubeenterprise.devops.lksnext.com/"
-        SONAR_TOKEN = credentials('sonarenterprise-analysis-token')
+        SONAR_HOST_URL = "https://sonarqube.devops.lksnext.com/"
+        SONAR_TOKEN = credentials('sonar-analysis-token')
         SONAR_BRANCH = "${env.BRANCH_NAME}"
     }
     stages {
+        stage('Dependency-Check') {
+            steps {
+                script {
+                    sh '''
+                        docker run --rm \
+                            -v ./:/app \
+                            -v "/home/jenkins/.m2":"/home/jenkins/.m2" \
+                            -e JOB_ACTION="compile" \
+                            -e MAVEN_CMD="dependency-check:check -DfailBuildOnCVSS=11 -Dformat=ALL" \
+                            $BUILD_IMAGE
+                    '''
+                }
+            }
+        }
         stage('Sonar') {
             steps {
                 script {
@@ -17,7 +31,7 @@ pipeline {
                             -v ./:/app \
                             -v "/home/jenkins/.m2":"/home/jenkins/.m2" \
                             -e JOB_ACTION="compile" \
-                            -e MAVEN_CMD="clean verify sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.token=$SONAR_TOKEN -Dsonar.branch.name=$SONAR_BRANCH -Pcoverage" \
+                            -e MAVEN_CMD="clean verify sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.token=$SONAR_TOKEN -Dsonar.branch.name=$SONAR_BRANCH -Pcoverage -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-report.xml -Dsonar.dependencyCheck.htmlReportPath=target/dependency-check-report.html -Dsonar.dependencyCheck.jsonReportPath=target/dependency-check-report.json" \
                             $BUILD_IMAGE
                     '''
                 }
