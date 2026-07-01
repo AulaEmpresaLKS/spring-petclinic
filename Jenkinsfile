@@ -18,7 +18,7 @@ pipeline {
                             -v ./:/app \
                             -v "/home/jenkins/.m2":"/home/jenkins/.m2" \
                             -e JOB_ACTION="compile" \
-                            -e MAVEN_CMD="dependency-check:check -DfailBuildOnCVSS=11 -Dformat=ALL -DnvdDatafeedUrl=$VULNZ_URL -DdisableOssIndex" \
+                            -e MAVEN_CMD="dependency-check:check -DfailBuildOnCVSS=11 -Dformat=ALL -DnvdDatafeedUrl=$VULNZ_URL -DossindexAnalyzerEnabled=false" \
                             $BUILD_IMAGE
                     '''
                 }
