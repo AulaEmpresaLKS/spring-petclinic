@@ -41,6 +41,7 @@ pipeline {
     }
     post {
         always {
+            archiveArtifacts artifacts: 'target/dependency-check-report.*', allowEmptyArchive: true
             deleteDir()
         }
     }
