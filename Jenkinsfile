@@ -32,7 +32,7 @@ pipeline {
                             -v ./:/app \
                             -v "/home/jenkins/.m2":"/home/jenkins/.m2" \
                             -e JOB_ACTION="compile" \
-                            -e MAVEN_CMD="clean verify sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.token=$SONAR_TOKEN -Dsonar.branch.name=$SONAR_BRANCH -Pcoverage -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-report.xml -Dsonar.dependencyCheck.htmlReportPath=target/dependency-check-report.html -Dsonar.dependencyCheck.jsonReportPath=target/dependency-check-report.json" \
+                            -e MAVEN_CMD="clean verify sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.token=$SONAR_TOKEN -Pcoverage -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-report.xml -Dsonar.dependencyCheck.htmlReportPath=target/dependency-check-report.html -Dsonar.dependencyCheck.jsonReportPath=target/dependency-check-report.json" \
                             $BUILD_IMAGE
                     '''
                 }
