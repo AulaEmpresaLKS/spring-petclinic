@@ -7,6 +7,7 @@ pipeline {
         SONAR_HOST_URL = "https://sonarqube.devops.lksnext.com/"
         SONAR_TOKEN = credentials('sonar-analysis-token')
         SONAR_BRANCH = "${env.BRANCH_NAME}"
+        VULNZ_URL = "https://vulnz.devops.lksnext.com"
     }
     stages {
         stage('Dependency-Check') {
@@ -17,7 +18,7 @@ pipeline {
                             -v ./:/app \
                             -v "/home/jenkins/.m2":"/home/jenkins/.m2" \
                             -e JOB_ACTION="compile" \
-                            -e MAVEN_CMD="dependency-check:check -DfailBuildOnCVSS=11 -Dformat=ALL" \
+                            -e MAVEN_CMD="dependency-check:check -DfailBuildOnCVSS=11 -Dformat=ALL -DnvdDatafeedUrl=$VULNZ_URL" \
                             $BUILD_IMAGE
                     '''
                 }
